@@ -1,0 +1,6 @@
+framework module Pods_TaskScannerTests {
+  umbrella header "Pods-TaskScannerTests-umbrella.h"
+
+  export *
+  module * { export * }
+}
