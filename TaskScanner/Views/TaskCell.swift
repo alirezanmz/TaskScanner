@@ -4,36 +4,39 @@
 //
 //  Created by Alireza Namazi on 8/9/24.
 //
-
+import UIKit
 import UIKit
 
+// Custom UITableViewCell for displaying task information.
 class TaskCell: UITableViewCell {
     
-    // Define views once as private properties to avoid unnecessary allocations
-    private let titleLabel: UILabel = {
+    // Title label for the task.
+    private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.boldSystemFont(ofSize: 16)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
-    private let descriptionLabel: UILabel = {
+    // Description label for additional task details.
+    private lazy var descriptionLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 14)
         label.textColor = .gray
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.numberOfLines = 0
+        label.numberOfLines = 0  // Allows for multiple lines of text.
         return label
     }()
     
-    private let colorView: UIView = {
+    // Color view as an indicator for task categorization or priority.
+    private lazy var colorView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.layer.cornerRadius = 4
+        view.layer.cornerRadius = 4  // Rounded corners for a subtle effect.
         return view
     }()
     
-    // Initialize the cell and setup constraints
+    // Initialize the cell and setup UI elements.
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupUI()
@@ -43,47 +46,36 @@ class TaskCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    
-    // Setup UI only once during initialization
+    // Set up the UI layout and constraints.
     private func setupUI() {
         contentView.addSubview(colorView)
         contentView.addSubview(titleLabel)
         contentView.addSubview(descriptionLabel)
         
-        // Constraints for color view
         NSLayoutConstraint.activate([
+            // Layout for the color indicator view.
             colorView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 15),
             colorView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             colorView.widthAnchor.constraint(equalToConstant: 10),
-            colorView.heightAnchor.constraint(equalToConstant: 10)
-        ])
-        
-        // Constraints for title label
-        NSLayoutConstraint.activate([
+            colorView.heightAnchor.constraint(equalToConstant: 10),
+            
+            // Layout for the title label.
             titleLabel.leadingAnchor.constraint(equalTo: colorView.trailingAnchor, constant: 10),
             titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
-            titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15)
-        ])
-        
-        // Constraints for description label
-     
-        NSLayoutConstraint.activate([
+            titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15),
+            
+            // Layout for the description label.
             descriptionLabel.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
             descriptionLabel.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor),
             descriptionLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 5),
             descriptionLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10)
         ])
-
     }
     
-    // Configure the cell with data, avoiding unnecessary re-setup
+    // Configure the cell with task data.
     func configure(with task: Assignment) {
         titleLabel.text = task.title
         descriptionLabel.text = task.details
-        if let color = UIColor(hexString: task.colorCode) {
-            colorView.backgroundColor = color
-        } else {
-            colorView.backgroundColor = .clear // Default color if parsing fails
-        }
+        colorView.backgroundColor = UIColor(hexString: task.colorCode) ?? .clear
     }
 }
