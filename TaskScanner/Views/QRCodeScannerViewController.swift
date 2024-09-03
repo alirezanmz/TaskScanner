@@ -38,14 +38,23 @@ class QRCodeScannerViewController: UIViewController, AVCaptureMetadataOutputObje
         guard let videoCaptureDevice = AVCaptureDevice.default(for: .video),
               let videoInput = try? AVCaptureDeviceInput(device: videoCaptureDevice),
               captureSession?.canAddInput(videoInput) == true else {
-            failed()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: { [weak self] in
+                guard let self = self else {return}
+                
+                self.failed()
+            })
             return
         }
         captureSession?.addInput(videoInput)
         
         let metadataOutput = AVCaptureMetadataOutput()
         guard captureSession?.canAddOutput(metadataOutput) == true else {
-            failed()
+          
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: { [weak self] in
+                guard let self = self else {return}
+                
+                self.failed()
+            })
             return
         }
         captureSession?.addOutput(metadataOutput)
@@ -54,6 +63,7 @@ class QRCodeScannerViewController: UIViewController, AVCaptureMetadataOutputObje
         
         _ = previewLayer  // Ensure the preview layer is created and added.
         captureSession?.startRunning()
+       
     }
     
     // Handle failure by showing an alert and stopping the session.
@@ -63,7 +73,9 @@ class QRCodeScannerViewController: UIViewController, AVCaptureMetadataOutputObje
             message: "Your device does not support scanning a code from an item. Please use a device with a camera.",
             preferredStyle: .alert
         )
-        alertController.addAction(UIAlertAction(title: "OK", style: .default))
+        alertController.addAction(UIAlertAction(title: "ok", style: .cancel, handler: { _ in
+            self.dismiss(animated: true)
+        }))
         present(alertController, animated: true)
         captureSession = nil
     }
