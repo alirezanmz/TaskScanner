@@ -19,8 +19,8 @@ class TaskViewModel: ObservableObject {
     // Fetches tasks from the network; falls back to Core Data on failure.
     func fetchTasks() async {
         do {
-            let token = try await networkManager.login()
-            let tasks = try await networkManager.fetchTasks(token: token)
+
+            let tasks = try await networkManager.fetchTasks()
             self.tasks = tasks
             self.filteredTasks = tasks
             await saveTasksToCoreData(tasks: tasks)

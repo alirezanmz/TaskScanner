@@ -59,43 +59,18 @@ enum HTTPStatusCode: Int {
 class NetworkManager {
     static let shared = NetworkManager()  // Singleton instance.
     
-    private let baseUrl = "https://api.baubuddy.de/"
+    private let baseUrl = "https://sandboxgeneraldata.blob.core.windows.net/containeraccessv1/"
     private init() {}
     
     // Logs in the user and returns an access token.
-    func login() async throws -> String {
-        let url = "\(baseUrl)index.php/login"
-        let parameters: [String: Any] = ["username": "365", "password": "1"]
-        let headers: HTTPHeaders = [
-            "Authorization": "Basic QVBJX0V4cGxvcmVyOjEyMzQ1NmlzQUxhbWVQYXNz",
-            "Content-Type": "application/json"
-        ]
-        
-        return try await withCheckedThrowingContinuation { continuation in
-            AF.request(url, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
-                .responseDecodable(of: LoginResponse.self) { response in
-                    switch response.result {
-                    case .success(let loginResponse):
-                        continuation.resume(returning: loginResponse.oauth.access_token)
-                    case .failure(let error):
-                        if let statusCode = response.response?.statusCode {
-                            let networkError = NetworkError(statusCode: statusCode)
-                            continuation.resume(throwing: networkError)
-                        } else {
-                            continuation.resume(throwing: NetworkError.unknownError(error))
-                        }
-                    }
-                }
-        }
-    }
+
     
     // Fetches tasks using the provided access token.
-    func fetchTasks(token: String) async throws -> [Assignment] {
-        let url = "\(baseUrl)dev/index.php/v1/tasks/select"
-        let headers: HTTPHeaders = ["Authorization": "Bearer \(token)"]
+    func fetchTasks() async throws -> [Assignment] {
+        let url = "\(baseUrl)Data-Tasks.json"
         
         return try await withCheckedThrowingContinuation { continuation in
-            AF.request(url, headers: headers)
+            AF.request(url)
                 .responseDecodable(of: [Assignment].self) { response in
                     switch response.result {
                     case .success(let tasks):
